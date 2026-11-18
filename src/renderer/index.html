@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https: data:; media-src https:; connect-src 'none'"
+    />
+    <title>BPM Database</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <button id="backBtn" class="icon-btn" title="Back (Alt+←)" hidden>
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <nav id="crumbs" class="crumbs" aria-label="Breadcrumb"></nav>
+      <div class="spacer"></div>
+      <button id="settingsBtn" class="icon-btn" title="Settings">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+      </button>
+    </header>
+
+    <div id="keyBanner" class="banner" hidden>
+      No GetSongBPM key set: stats come from Deezer and local preview analysis only (estimates).
+      <button id="bannerSettings" class="link-btn">Add a free key</button>
+    </div>
+
+    <main>
+      <!-- Search -->
+      <section id="screen-search" class="screen">
+        <div class="search-wrap">
+          <h1 class="hero">Find an artist</h1>
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <input id="searchInput" type="search" placeholder="Search artists…" autocomplete="off" spellcheck="false" autofocus />
+          </div>
+          <div id="searchStatus" class="status"></div>
+          <ul id="artistResults" class="artist-list"></ul>
+        </div>
+      </section>
+
+      <!-- Artist -->
+      <section id="screen-artist" class="screen" hidden>
+        <div class="artist-head">
+          <img id="artistPic" class="avatar-lg" alt="" />
+          <div>
+            <h1 id="artistName"></h1>
+            <div id="artistMeta" class="muted"></div>
+          </div>
+        </div>
+        <div id="typeFilter" class="chips" role="tablist"></div>
+        <div id="artistStatus" class="status"></div>
+        <div id="albumGrid" class="album-grid"></div>
+      </section>
+
+      <!-- Album -->
+      <section id="screen-album" class="screen" hidden>
+        <div class="album-head">
+          <img id="albumCover" class="cover-lg" alt="" />
+          <div>
+            <div id="albumType" class="eyebrow"></div>
+            <h1 id="albumTitle"></h1>
+            <div id="albumMeta" class="muted"></div>
+            <div id="albumProgress" class="progress-text"></div>
+          </div>
+        </div>
+        <div id="albumStatus" class="status"></div>
+        <table id="trackTable" class="tracks">
+          <thead>
+            <tr>
+              <th class="c-play"></th>
+              <th class="c-num">#</th>
+              <th class="c-title">Title</th>
+              <th class="c-dur">Duration</th>
+              <th class="c-bpm">BPM</th>
+              <th class="c-key">Key</th>
+              <th class="c-cam">Camelot</th>
+              <th class="c-src">Source</th>
+            </tr>
+          </thead>
+          <tbody id="trackRows"></tbody>
+        </table>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>
+        BPM &amp; key data from
+        <a href="https://getsongbpm.com" target="_blank" rel="noopener">GetSongBPM.com</a>
+      </span>
+      <span class="sep">·</span>
+      <span>Catalogue &amp; previews from <a href="https://www.deezer.com" target="_blank" rel="noopener">Deezer</a></span>
+      <span class="spacer"></span>
+      <span class="muted legend"><span class="est">est.</span> = estimated from the 30 s preview</span>
+    </footer>
+
+    <dialog id="settingsDialog">
+      <form method="dialog" class="settings">
+        <h2>Settings</h2>
+        <label for="apiKeyInput">GetSongBPM API key</label>
+        <input id="apiKeyInput" type="password" placeholder="Paste your key" autocomplete="off" spellcheck="false" />
+        <p class="muted small">
+          Free key from <a href="https://getsongbpm.com/api" target="_blank" rel="noopener">getsongbpm.com/api</a>.
+          Stored only on this computer.
+        </p>
+        <div class="row small">
+          <div id="keyState"></div>
+          <button id="removeKeyBtn" type="button" class="link-btn" hidden>Remove key</button>
+        </div>
+        <hr />
+        <div class="row">
+          <div>
+            <div>Stats cache</div>
+            <div class="muted small">Forget all saved BPM/key results.</div>
+          </div>
+          <button id="clearCacheBtn" type="button" class="btn">Clear cache</button>
+        </div>
+        <div class="actions">
+          <button value="cancel" class="btn">Cancel</button>
+          <button id="saveSettings" value="save" class="btn primary">Save</button>
+        </div>
+      </form>
+    </dialog>
+
+    <audio id="player" preload="none"></audio>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
